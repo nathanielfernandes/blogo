@@ -53,21 +53,24 @@ func (b *Blogo) NewPost(id, title, hook, content string, tags []string) error {
 	return nil
 }
 
-func (b *Blogo) GetPost(id string) (m.Post, error) {
-	if post, ok := b.cache[id]; ok {
-		return post, nil
-	}
+func (b *Blogo) GetPost(id string) (m.Post, bool) {
+	// if post, ok := b.cache[id]; ok {
+	// 	return post, true
+	// }
 
-	fmt.Println("FETCHING POST: " + id)
-	post, err := b.db.GetPost(id)
-	if err != nil {
-		return m.Post{}, nil
-	}
+	// fmt.Println("FETCHING POST: " + id)
+	// post, err := b.db.GetPost(id)
+	// if err != nil {
+	// 	return m.Post{}, err
+	// }
 
-	post.Content = b.ToHTML(post.Content)
+	// post.Content = b.ToHTML(post.Content)
 
-	b.cache[id] = post
-	return post, err
+	// b.cache[id] = post
+	// return post, err
+
+	post, ok := b.cache[id]
+	return post, ok
 }
 
 func (b *Blogo) FillCache() {

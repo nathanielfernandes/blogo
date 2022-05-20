@@ -42,8 +42,8 @@ func (b *Blogo) Post(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 func (b *Blogo) PostContent(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	Cors(w)
 
-	post, err := b.GetPost(ps.ByName("id"))
-	if err != nil {
+	post, ok := b.GetPost(ps.ByName("id"))
+	if !ok {
 		http.Error(w, "Invalid Post ID", http.StatusNotFound)
 		return
 	}
