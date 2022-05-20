@@ -38,7 +38,7 @@ func (bm *BlogoMongo) NewPost(id, title, hook, content string, tags []string) er
 		{Key: "hook", Value: hook},
 		{Key: "tags", Value: tags},
 		{Key: "content", Value: content},
-		{Key: "date", Value: time.Now().Unix()},
+		{Key: "date", Value: time.Now().Unix() * 1000},
 
 		{Key: "views", Value: 0},
 		{Key: "likes", Value: 0},
