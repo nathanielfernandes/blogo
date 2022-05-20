@@ -6,7 +6,6 @@ import (
 
 	"github.com/bep/debounce"
 	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/parser"
 	m "github.com/nathanielfernandes/blogo/lib/mongo"
 	rl "github.com/nathanielfernandes/rl"
 )
@@ -14,8 +13,6 @@ import (
 type Blogo struct {
 	db    *m.BlogoMongo
 	cache map[string]m.Post
-
-	md *parser.Parser
 
 	get_rlm    *rl.RatelimitManager
 	view_rlm   *rl.RatelimitManager
@@ -28,8 +25,6 @@ func NewBlogo() Blogo {
 	return Blogo{
 		db:    m.NewBlogoMongo(),
 		cache: map[string]m.Post{},
-
-		md: parser.New(),
 
 		get_rlm:    rl.NewRatelimitManager(5, 1000),
 		view_rlm:   rl.NewRatelimitManager(1, 86400000),
@@ -90,5 +85,5 @@ func (b *Blogo) FillCache() {
 }
 
 func (b *Blogo) ToHTML(content string) string {
-	return string(markdown.ToHTML([]byte(content), b.md, nil))
+	return string(markdown.ToHTML([]byte(content), nil, nil))
 }
