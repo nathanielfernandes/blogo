@@ -19,6 +19,10 @@ func main() {
 	router.GET("/post/content/:id", blogo.PostContent)
 	router.GET("/posts", blogo.Posts)
 
+	router.GET("/refresh/:auth_token", blogo.Refresh)
+	router.GET("/refreshpost/:auth_token/:id", blogo.RefreshPost)
+	// router.GET("/page/:auth_token/:id", blogo.PostPage)
+
 	// router.POST("/publish/:id/:auth_token", blogo.Publish)
 	// router.GET("/ws")
 

@@ -24,6 +24,60 @@ func Cors(w http.ResponseWriter) {
 // 	}
 // }
 
+func (b *Blogo) RefreshPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	Cors(w)
+
+	auth_token := ps.ByName("auth_token")
+	if auth_token == AUTHTOKEN {
+		err := b.ReFetchPost(ps.ByName("id"))
+		if err != nil {
+			http.Error(w, "Invalid Post ID", http.StatusNotFound)
+			return
+		}
+	} else {
+		http.Error(w, "Invalid Auth Token", http.StatusUnauthorized)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte("Refreshed Post"))
+}
+
+func (b *Blogo) Refresh(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	Cors(w)
+
+	auth_token := ps.ByName("auth_token")
+	if auth_token == AUTHTOKEN {
+		b.FillCache()
+	} else {
+		http.Error(w, "Invalid Auth Token", http.StatusUnauthorized)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte("Refreshed Posts"))
+}
+
+// func (b *Blogo) PostPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// 	Cors(w)
+
+// 	auth_token := ps.ByName("auth_token")
+// 	if auth_token == AUTHTOKEN {
+// 		post, ok := b.GetPost(ps.ByName("id"))
+
+// 		if !ok {
+// 			http.Error(w, "Invalid Post ID", http.StatusNotFound)
+// 			return
+// 		}
+
+// 		w.Header().Set("Content-Type", "text/html")
+// 		w.Write(b.ToPage(post.Content))
+// 	} else {
+// 		http.Error(w, "Invalid Auth Token", http.StatusUnauthorized)
+// 		return
+// 	}
+// }
+
 func (b *Blogo) Post(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	Cors(w)
 

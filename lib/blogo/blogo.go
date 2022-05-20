@@ -6,6 +6,7 @@ import (
 
 	"github.com/bep/debounce"
 	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/parser"
 	m "github.com/nathanielfernandes/blogo/lib/mongo"
 	rl "github.com/nathanielfernandes/rl"
 )
@@ -49,6 +50,7 @@ func (b *Blogo) NewPost(id, title, hook, content string, tags []string) error {
 	}
 
 	fmt.Println("POST SUBMITTED")
+	post.Content = b.ToHTML(post.Content)
 	b.cache[id] = post
 	return nil
 }
@@ -73,6 +75,18 @@ func (b *Blogo) GetPost(id string) (m.Post, bool) {
 	return post, ok
 }
 
+func (b *Blogo) ReFetchPost(id string) error {
+	post, err := b.db.GetPost(id)
+	if err != nil {
+		return err
+	}
+
+	post.Content = b.ToHTML(post.Content)
+	b.cache[post.ID] = post
+
+	return nil
+}
+
 func (b *Blogo) FillCache() {
 	fmt.Println("FILLING CACHE")
 	posts, err := b.db.GetAllPosts()
@@ -88,5 +102,18 @@ func (b *Blogo) FillCache() {
 }
 
 func (b *Blogo) ToHTML(content string) string {
-	return string(markdown.ToHTML([]byte(content), nil, nil))
+	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
+	p := parser.NewWithExtensions(extensions)
+	return string(markdown.ToHTML([]byte(content), p, nil))
 }
+
+// func (b *Blogo) ToPage(content string) []byte {
+// 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+// 	opts := html.RendererOptions{Flags: htmlFlags}
+// 	renderer := html.NewRenderer(opts)
+
+// 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
+// 	p := parser.NewWithExtensions(extensions)
+
+// 	return markdown.ToHTML([]byte(content), p, renderer)
+// }
